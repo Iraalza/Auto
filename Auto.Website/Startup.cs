@@ -7,32 +7,41 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Reflection;
-using Microsoft.OpenApi.Models;
-using Auto.Website.GraphQL.GraphTypes;
+using System.Threading.Tasks;
 using Auto.Website.GraphQL.Schemas;
-using GraphiQl;
+using EasyNetQ;
 using GraphQL;
-using GraphQL.MicrosoftDI;
+using GraphQL.Server;
 using GraphQL.Types;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using GraphiQl;
 
-namespace Auto.Website {
-    public class Startup {
+namespace Auto.Website
+{
+    public class Startup
+    {
 
-        public Startup(IConfiguration configuration) {
+        public Startup(IConfiguration configuration)
+        {
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services) {
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddControllersWithViews().AddNewtonsoftJson();
             services.AddSingleton<IAutoDatabase, AutoCsvFileDatabase>();
 
+            services.AddSingleton<ISchema, AutoSchema>();
+            services.AddGraphQL(options => { options.EnableMetrics = false; }).AddSystemTextJson();
+
             services.AddSwaggerGen(
                 config => {
-                    config.SwaggerDoc("v1", new OpenApiInfo() {
+                    config.SwaggerDoc("v1", new OpenApiInfo()
+                    {
                         Title = "Auto API"
                     });
                     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -40,18 +49,21 @@ namespace Auto.Website {
                     config.IncludeXmlComments(xmlPath);
                 });
 
-            services.AddGraphQL(builder => builder
-                .AddNewtonsoftJson()
-                .AddAutoSchema<AutoSchema>()
-                .AddSchema<AutoSchema>()
-                .AddGraphTypes(typeof(VehicleGraphType).Assembly)
-                );
+            /*var bus = RabbitHutch.CreateBus(Configuration.GetConnectionString("AutoRabbitMQ"));
+            services.AddSingleton<IBus>(bus);*/
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
-            } else {
+                app.UseRequestResponseLogging();
+                app.UseGraphQLAltair();
+
+            }
+            else
+            {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -62,10 +74,8 @@ namespace Auto.Website {
 
             app.UseSwagger();
             app.UseSwaggerUI();
-
-            //app.UseGraphQL<AutoSchema>();
             app.UseGraphQL<ISchema>();
-            app.UseGraphQLAltair();
+            app.UseGraphiQl("/graphiql");
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(

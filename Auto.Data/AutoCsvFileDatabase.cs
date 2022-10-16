@@ -40,7 +40,7 @@ namespace Auto.Data {
             foreach (var vehicle in vehicles.Values)
             {
                 vehicle.Owners = owners.Values.Where(o => o.VehicleRegistration == vehicle.Registration).ToList();
-                foreach (var owner in vehicle.Owners) owner.Vehicle = vehicle;
+                foreach (var owner in vehicle.Owners) owner.VehicleCode = vehicle;
             }
         }
 
@@ -148,8 +148,8 @@ namespace Auto.Data {
 
         public void CreateOwner(Owner owner)
         {
-            owner.VehicleRegistration = owner.Vehicle.Registration;
-            owner.Vehicle.Owners.Add(owner);
+            owner.VehicleRegistration = owner.VehicleCode.Registration;
+            owner.VehicleCode.Owners.Add(owner);
             UpdateOwner(owner);
         }
 

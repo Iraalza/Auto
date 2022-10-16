@@ -8,8 +8,6 @@ namespace Auto.Data.Entities
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string VehicleRegistration { get; set; }
-
-        [JsonIgnore]
-        public virtual Vehicle Vehicle { get; set; }
+        public virtual Vehicle VehicleCode { get; set; }
     }
 }

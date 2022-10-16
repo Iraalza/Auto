@@ -9,8 +9,10 @@ namespace Auto.Website.GraphQL.Schemas
     {
         public AutoSchema(IAutoDatabase db)
         {
-            Query = new VehicleQuery(db);
-            Mutation = new VehicleMutation(db);
+/*            Query = new VehicleQuery(db);
+            Mutation = new VehicleMutation(db);*/
+            Query = new OwnerQuery(db);
+            Mutation = new OwnerMutation(db);
         }
     }
 }
