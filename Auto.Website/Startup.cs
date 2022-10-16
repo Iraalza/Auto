@@ -8,6 +8,13 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Auto.Website.GraphQL.GraphTypes;
+using Auto.Website.GraphQL.Schemas;
+using GraphiQl;
+using GraphQL;
+using GraphQL.MicrosoftDI;
+using GraphQL.Types;
+using Newtonsoft.Json;
 
 namespace Auto.Website {
     public class Startup {
@@ -32,6 +39,13 @@ namespace Auto.Website {
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     config.IncludeXmlComments(xmlPath);
                 });
+
+            services.AddGraphQL(builder => builder
+                .AddNewtonsoftJson()
+                .AddAutoSchema<AutoSchema>()
+                .AddSchema<AutoSchema>()
+                .AddGraphTypes(typeof(VehicleGraphType).Assembly)
+                );
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -48,6 +62,10 @@ namespace Auto.Website {
 
             app.UseSwagger();
             app.UseSwaggerUI();
+
+            //app.UseGraphQL<AutoSchema>();
+            app.UseGraphQL<ISchema>();
+            app.UseGraphQLAltair();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
