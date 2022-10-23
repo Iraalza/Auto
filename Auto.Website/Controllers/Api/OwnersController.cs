@@ -79,7 +79,7 @@ namespace Auto.Website.Controllers.Api
             json._links = new
             {
                 self = new { href = $"/api/owners/{id}" },
-                vehicleModel = new { href = $"/api/vehicles/{owner.VehicleRegistration}" }
+                vehicleModel = new { href = $"/api/vehicles/{owner.VehicleCode}" }
             };
             json._actions = new
             {

@@ -31,16 +31,24 @@ namespace Auto.Website.GraphQL.Mutation
                     var vehicleRegistration = context.GetArgument<string>("vehicleRegistration");
 
                     var ownerVehicle = db.FindVehicle(vehicleRegistration);
-                    var owner = new Owner
+
+                    var owner = new Owner(firstName, lastName, phoneNumber);
+
+                    owner.VehicleCode = _db.FindVehicle(vehicleRegistration);
+
+                    _db.CreateOwner(owner);
+                    return owner;
+
+                    /*var owner = new Owner
                     {
                         FirstName = firstName,
                         LastName = lastName,
                         PhoneNumber = phoneNumber,
                         VehicleCode = ownerVehicle,
-                        VehicleRegistration = ownerVehicle.Registration
+                        VehicleCode = ownerVehicle.Registration
                     };
                     _db.CreateOwner(owner);
-                    return owner;
+                    return owner;*/
                 }
              );
         }

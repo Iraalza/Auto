@@ -37,11 +37,11 @@ namespace Auto.Data {
                 foreach (var vehicle in model.Vehicles) vehicle.VehicleModel = model;
             }
 
-            foreach (var vehicle in vehicles.Values)
+           /* foreach (var vehicle in vehicles.Values)
             {
                 vehicle.Owners = owners.Values.Where(o => o.VehicleRegistration == vehicle.Registration).ToList();
                 foreach (var owner in vehicle.Owners) owner.VehicleCode = vehicle;
-            }
+            }*/
         }
 
         private string ResolveCsvFilePath(string filename) {
@@ -97,7 +97,7 @@ namespace Auto.Data {
             var filePath = ResolveCsvFilePath(filename);
             foreach (var line in File.ReadAllLines(filePath))
             {
-                var tokens = line.Split(",");
+                /*var tokens = line.Split(",");
                 var owner = new Owner
                 {
                     FirstName = tokens[0],
@@ -105,9 +105,18 @@ namespace Auto.Data {
                     PhoneNumber = tokens[2],
                     VehicleRegistration = tokens[3]
                 };
-                owners.Add(owner.PhoneNumber, owner);
+                owners.Add(owner.PhoneNumber, owner);*/
+
+                var tokens = line.Split(",");
+                var owner = new Owner(tokens[0], tokens[1], tokens[2]);
+
+                var vehicle = this.vehicles
+                    .FirstOrDefault(e => tokens[3] == e.Key).Value;
+                owner.VehicleCode = vehicle;
+
+                owners[owner.PhoneNumber] = owner;
             }
-            logger.LogInformation($"Loaded {owners.Count} owners from {filePath}");
+            /*logger.LogInformation($"Loaded {owners.Count} owners from {filePath}");*/
         }
 
         public int CountVehicles() => vehicles.Count;
@@ -148,9 +157,10 @@ namespace Auto.Data {
 
         public void CreateOwner(Owner owner)
         {
-            owner.VehicleRegistration = owner.VehicleCode.Registration;
+/*            owner.VehicleRegistration = owner.VehicleCode.Registration;
             owner.VehicleCode.Owners.Add(owner);
-            UpdateOwner(owner);
+            UpdateOwner(owner);*/
+            owners.Add(owner.PhoneNumber, owner);
         }
 
         public void UpdateOwner(Owner owner)
@@ -160,8 +170,9 @@ namespace Auto.Data {
 
         public void DeleteOwner(Owner owner)
         {
-            var vehicle = FindVehicle(owner.VehicleRegistration);
+/*            var vehicle = FindVehicle(owner.VehicleRegistration);
             vehicle.Owners.Remove(owner);
+            owners.Remove(owner.PhoneNumber);*/
             owners.Remove(owner.PhoneNumber);
         }
     }
