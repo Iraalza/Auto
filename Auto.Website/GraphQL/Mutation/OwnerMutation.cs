@@ -38,17 +38,6 @@ namespace Auto.Website.GraphQL.Mutation
 
                     _db.CreateOwner(owner);
                     return owner;
-
-                    /*var owner = new Owner
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        PhoneNumber = phoneNumber,
-                        VehicleCode = ownerVehicle,
-                        VehicleCode = ownerVehicle.Registration
-                    };
-                    _db.CreateOwner(owner);
-                    return owner;*/
                 }
              );
         }
