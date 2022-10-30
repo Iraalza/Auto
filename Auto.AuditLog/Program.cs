@@ -18,7 +18,7 @@ namespace Auto.AuditLog
         {
             using var bus = RabbitHutch.CreateBus(config.GetConnectionString("AutoRabbitMQ"));
             Console.WriteLine("Connected! Listening for NewMessage messages.");
-            //await bus.PubSub.SubscribeAsync<NewVehicleMessage>(SUBSCRIBER_ID, HandleNewVehicleMessage);
+            await bus.PubSub.SubscribeAsync<NewVehicleMessage>(SUBSCRIBER_ID, HandleNewVehicleMessage);
             await bus.PubSub.SubscribeAsync<NewOwnerMessage>(SUBSCRIBER_ID, HandleNewOwnerMessage);
             Console.ReadKey(true);
         }
