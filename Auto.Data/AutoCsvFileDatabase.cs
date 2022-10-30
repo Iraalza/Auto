@@ -112,7 +112,7 @@ namespace Auto.Data {
 
                 var vehicle = this.vehicles
                     .FirstOrDefault(e => tokens[3] == e.Key).Value;
-                owner.VehicleCode = vehicle;
+                owner.Vehicle = vehicle;
 
                 owners[owner.PhoneNumber] = owner;
             }

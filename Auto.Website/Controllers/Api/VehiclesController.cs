@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Auto.Data;
 using Auto.Data.Entities;
+using Auto.Messages;
 using Auto.Website.Models;
 using Castle.Core.Internal;
+using EasyNetQ;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -14,10 +16,12 @@ namespace Auto.Website.Controllers.Api {
 	[ApiController]
 	public class VehiclesController : ControllerBase {
 		private readonly IAutoDatabase db;
+        private readonly IBus bus;
 
-		public VehiclesController(IAutoDatabase db) {
+        public VehiclesController(IAutoDatabase db, IBus bus) {
 			this.db = db;
-		}
+            this.bus = bus;
+        }
 
 		private dynamic Paginate(string url, int index, int count, int total) {
 			dynamic links = new ExpandoObject();
@@ -90,14 +94,29 @@ namespace Auto.Website.Controllers.Api {
 				VehicleModel = vehicleModel
 			};
 			db.CreateVehicle(vehicle);
-			
-			return Ok(dto);
+            PublishNewVehicleMessage(vehicle);
+            return Ok(dto);
 		}
 
-		
+        private void PublishNewVehicleMessage(Vehicle vehicle)
+        {
+            var message = new NewVehicleMessage()
+            {
+                Registration = vehicle.Registration,
+                Manufacturer = vehicle.VehicleModel?.Manufacturer?.Name,
+                ModelName = vehicle.VehicleModel?.Name,
+                ModelCode = vehicle.VehicleModel?.Code,
+                Color = vehicle.Color,
+                Year = vehicle.Year,
+                ListedAtUtc = DateTime.UtcNow
+            };
+            bus.PubSub.Publish(message);
+        }
 
-		// PUT api/vehicles/ABC123
-		[HttpPut("{id}")]
+
+
+        // PUT api/vehicles/ABC123
+        [HttpPut("{id}")]
 		public IActionResult Put(string id, [FromBody] dynamic dto) {
 			var vehicleModelHref = dto._links.vehicleModel.href;
 			var vehicleModelId = ModelsController.ParseModelId(vehicleModelHref);

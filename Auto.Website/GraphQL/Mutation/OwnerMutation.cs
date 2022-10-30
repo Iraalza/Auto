@@ -34,7 +34,7 @@ namespace Auto.Website.GraphQL.Mutation
 
                     var owner = new Owner(firstName, lastName, phoneNumber);
 
-                    owner.VehicleCode = _db.FindVehicle(vehicleRegistration);
+                    owner.Vehicle = _db.FindVehicle(vehicleRegistration);
 
                     _db.CreateOwner(owner);
                     return owner;

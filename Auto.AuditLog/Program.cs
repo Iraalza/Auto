@@ -17,8 +17,9 @@ namespace Auto.AuditLog
         static async Task Main(string[] args)
         {
             using var bus = RabbitHutch.CreateBus(config.GetConnectionString("AutoRabbitMQ"));
-            Console.WriteLine("Connected! Listening for NewVehicleMessage messages.");
-            await bus.PubSub.SubscribeAsync<NewVehicleMessage>(SUBSCRIBER_ID, HandleNewVehicleMessage);
+            Console.WriteLine("Connected! Listening for NewMessage messages.");
+            //await bus.PubSub.SubscribeAsync<NewVehicleMessage>(SUBSCRIBER_ID, HandleNewVehicleMessage);
+            await bus.PubSub.SubscribeAsync<NewOwnerMessage>(SUBSCRIBER_ID, HandleNewOwnerMessage);
             Console.ReadKey(true);
         }
 
@@ -26,6 +27,13 @@ namespace Auto.AuditLog
         {
             var csv =
                 $"{message.Registration},{message.Manufacturer},{message.ModelName},{message.Color},{message.Year},{message.ListedAtUtc:O}";
+            Console.WriteLine(csv);
+        }
+
+        private static void HandleNewOwnerMessage(NewOwnerMessage message)
+        {
+            var csv =
+                $"{message.Registration},{message.Manufacturer},{message.ModelName},{message.Color},{message.Year},{message.ListedAtUtc:O},{message.FirstName},{message.LastName},{message.PhoneNumber}";
             Console.WriteLine(csv);
         }
 

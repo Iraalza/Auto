@@ -11,7 +11,7 @@ namespace Auto.Website.GraphQL.GraphTypes
             Field(c => c.FirstName).Description("Имя владельца");
             Field(c => c.LastName).Description("Фамилия владельца");
             Field(c => c.PhoneNumber).Description("Номер телефона владельца");
-            Field(c => c.VehicleCode, nullable: false, type: typeof(VehicleGraphType)).Description("Номер автомобиля");
+            Field(c => c.Vehicle, nullable: false, type: typeof(VehicleGraphType)).Description("Номер автомобиля");
         }
     }
 }
