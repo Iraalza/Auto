@@ -49,8 +49,8 @@ namespace Auto.Website
                     config.IncludeXmlComments(xmlPath);
                 });
 
-            /*var bus = RabbitHutch.CreateBus(Configuration.GetConnectionString("AutoRabbitMQ"));
-            services.AddSingleton<IBus>(bus);*/
+            var bus = RabbitHutch.CreateBus(Configuration.GetConnectionString("AutoRabbitMQ"));
+            services.AddSingleton<IBus>(bus);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
