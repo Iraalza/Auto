@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auto.OwnerServer";
+
+package owner;
+
+service Owner {
+	rpc GetOwner (OwnerByPhoneNumberRequest) returns (OwnerByPhoneNumberResult);
+}
+
+message OwnerByPhoneNumberRequest {
+	string phonenumber = 1;
+}
+
+message OwnerByPhoneNumberResult {
+	string region = 1;
+}
