@@ -16,6 +16,7 @@ using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using GraphiQl;
+//using Auto.Website.Hubs;
 
 namespace Auto.Website
 {
@@ -37,6 +38,8 @@ namespace Auto.Website
 
             services.AddSingleton<ISchema, AutoSchema>();
             services.AddGraphQL(options => { options.EnableMetrics = false; }).AddSystemTextJson();
+
+            //services.AddSignalR();
 
             services.AddSwaggerGen(
                 config => {
@@ -78,6 +81,7 @@ namespace Auto.Website
             app.UseGraphiQl("/graphiql");
 
             app.UseEndpoints(endpoints => {
+                //endpoints.MapHub<AutoHub>("/hub");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
